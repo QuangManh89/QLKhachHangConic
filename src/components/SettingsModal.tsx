@@ -421,7 +421,7 @@ export function SettingsModal({
           {tab === 'security' && (
             <div className="space-y-3.5">
               <p className="text-xs text-slate-500 dark:text-slate-400">
-                Đổi mã PIN / mật khẩu khóa màn hình khi mở website ConicComputer (mặc định ban đầu: <strong>1234</strong>).
+                Đổi mật khẩu khóa màn hình khi mở website ConicComputer.
               </p>
 
               <div>

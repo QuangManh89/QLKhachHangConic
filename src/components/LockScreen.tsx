@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import { Lock, Eye, EyeOff, ArrowRight } from 'lucide-react';
-import { isUsingDefaultPinHint, verifyPin } from '../services/authService';
+import { verifyPin } from '../services/authService';
 
 interface LockScreenProps {
   onUnlocked: () => void;
@@ -11,8 +11,6 @@ export function LockScreen({ onUnlocked }: LockScreenProps) {
   const [showPin, setShowPin] = useState(false);
   const [error, setError] = useState('');
   const [checking, setChecking] = useState(false);
-
-  const showDefaultHint = isUsingDefaultPinHint();
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -98,14 +96,6 @@ export function LockScreen({ onUnlocked }: LockScreenProps) {
             <ArrowRight className="h-4 w-4" />
           </button>
         </form>
-
-        {showDefaultHint && (
-          <p className="mt-5 rounded-xl bg-slate-50 px-3.5 py-2.5 text-center text-xs text-slate-500 dark:bg-slate-800/60 dark:text-slate-400">
-            Mã PIN mặc định lần đầu: <strong className="font-semibold text-slate-700 dark:text-slate-200">1234</strong>
-            <br />
-            Bạn có thể đổi mật khẩu riêng trong mục <strong>Cài đặt</strong>.
-          </p>
-        )}
       </div>
     </div>
   );

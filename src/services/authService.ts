@@ -1,6 +1,7 @@
-const PIN_HASH_KEY = 'conic_pin_hash_v1';
-const SESSION_UNLOCK_KEY = 'conic_session_unlocked_v1';
-const DEFAULT_PIN = '1234';
+const PIN_HASH_KEY = 'conic_pin_hash_v2';
+const LEGACY_PIN_HASH_KEY = 'conic_pin_hash_v1';
+const SESSION_UNLOCK_KEY = 'conic_session_unlocked_v2';
+const DEFAULT_PIN_SHA256 = '64afa61700a39ef1a15628aa8c1fa496483fd6b15124ff93b21fbfc65e782ffb';
 
 async function sha256(text: string): Promise<string> {
   if (typeof crypto !== 'undefined' && crypto.subtle) {
@@ -20,14 +21,17 @@ async function sha256(text: string): Promise<string> {
 }
 
 export async function ensurePinInitialized(): Promise<void> {
+  if (localStorage.getItem(LEGACY_PIN_HASH_KEY)) {
+    localStorage.removeItem(LEGACY_PIN_HASH_KEY);
+    localStorage.removeItem('conic_pin_customized_v1');
+  }
   if (!localStorage.getItem(PIN_HASH_KEY)) {
-    const defaultHash = await sha256(DEFAULT_PIN);
-    localStorage.setItem(PIN_HASH_KEY, defaultHash);
+    localStorage.setItem(PIN_HASH_KEY, DEFAULT_PIN_SHA256);
   }
 }
 
 export function isUsingDefaultPinHint(): boolean {
-  return !localStorage.getItem('conic_pin_customized_v1');
+  return false;
 }
 
 export async function verifyPin(inputPin: string): Promise<boolean> {
