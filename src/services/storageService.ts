@@ -4,10 +4,13 @@ import { calculateWarrantyEndDate, getTodayISO } from '../utils/warranty';
 const SETTINGS_KEY = 'conic_settings_v1';
 const LOCAL_DATA_KEY = 'conic_local_data_v1';
 
+const ENV_WEB_APP_URL = (import.meta.env.VITE_WEB_APP_URL || '').trim();
+const ENV_SECRET_KEY = (import.meta.env.VITE_SECRET_KEY || '').trim();
+
 export const DEFAULT_SETTINGS: AppSettings = {
-  mode: 'local',
-  webAppUrl: '',
-  secretKey: 'CONIC_SECRET_2026',
+  mode: ENV_WEB_APP_URL ? 'sheets' : 'local',
+  webAppUrl: ENV_WEB_APP_URL,
+  secretKey: ENV_SECRET_KEY || 'CONIC_SECRET_2026',
   shopInfo: {
     name: 'ConicComputer',
     address: 'Liên hệ cập nhật địa chỉ trong Cài đặt',
@@ -124,9 +127,21 @@ export function loadSettings(): AppSettings {
     const raw = localStorage.getItem(SETTINGS_KEY);
     if (!raw) return DEFAULT_SETTINGS;
     const parsed = JSON.parse(raw) as Partial<AppSettings>;
+    const mergedUrl = parsed.webAppUrl?.trim() || DEFAULT_SETTINGS.webAppUrl;
+    const mergedSecret = parsed.secretKey?.trim() || DEFAULT_SETTINGS.secretKey;
+    const mergedMode: AppSettings['mode'] =
+      parsed.webAppUrl?.trim()
+        ? parsed.mode || 'sheets'
+        : ENV_WEB_APP_URL
+          ? 'sheets'
+          : parsed.mode || DEFAULT_SETTINGS.mode;
+
     return {
       ...DEFAULT_SETTINGS,
       ...parsed,
+      mode: mergedMode,
+      webAppUrl: mergedUrl,
+      secretKey: mergedSecret,
       shopInfo: {
         ...DEFAULT_SETTINGS.shopInfo,
         ...(parsed.shopInfo || {}),
